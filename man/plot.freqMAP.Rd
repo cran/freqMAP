@@ -7,8 +7,17 @@
   comparing two frequency MAP objects.
 }
 \usage{
-\method{plot}{freqMAP}(x, y = NULL, xlim = NULL, ylim = NULL, legend = NULL, show.p.value.legend = FALSE,
-              type = "freq", p.value.bar.alpha = c(0.05, 0.01), cex = 1, layout.matrix = NULL,...)
+\method{plot}{freqMAP}(x, y = NULL, xlim = NULL, ylim = NULL,
+              legend = NULL,
+              show.p.value.legend = FALSE,
+              type = "freq", 
+	      p.value.bar.alpha = c(0.05, 0.01),
+    	      p.value.bar.color=c("gray90","darkgray"),
+              cex=1,cex.axis=1,cex.lab=1,cex.main=1,
+              pch.x=2,lty.x=1,lwd.x=1,col.x="red",
+              pch.y=1,lty.y=2,lwd.y=1,col.y="blue",
+              cex.legend=1,
+              layout.matrix = NULL,...)
 }
 \arguments{
   \item{x}{ A \code{freqMAP} object, usually the result of a call to
@@ -37,8 +46,31 @@
   \item{p.value.bar.alpha}{ A 2-vector of p-value cutoffs for
     the p-value bar at the bottom of plots. This argument is ignored if
     \code{y} is not specified. See \bold{Details} below. }
-  \item{cex}{The size of all plotting characters, legend text, axis
-    annotation and axis labeling. }
+  \item{p.value.bar.color}{ A 2-vector of strings specifying the shading
+    colors for the p-value bar at the bottom of plots. This argument is ignored if
+    \code{y} is not specified. See \bold{Details} below. }
+  \item{cex}{The size of plotting characters. }
+  \item{cex.axis}{The value passed to cex.axis in all plots. See ?par
+    for details.}
+  \item{cex.lab}{The value passed to cex.lab in all plots. See ?par
+    for details.}
+  \item{cex.main}{The value passed to cex.main in all plots. See ?par
+    for details.}
+  \item{pch.x}{The plotting character used for the \code{freqMAP} object
+    in \code{x}.}
+  \item{lty.x}{The line type \code{lty} for the posterior bounds in the
+    \code{freqMAP} object in \code{x}.}
+  \item{lwd.x}{The line width \code{lwd} for the posterior bounds in the
+    \code{freqMAP} object in \code{x}.}
+  \item{col.x}{The plotting color for the \code{freqMAP} object in \code{x}.}
+  \item{pch.y}{The plotting character used for the \code{freqMAP} object in \code{y}.}
+  \item{lty.y}{The line type \code{lty} for the posterior bounds in the
+    \code{freqMAP} object in \code{y}.}
+  \item{lwd.y}{The line width \code{lwd} for the posterior bounds in the
+    \code{freqMAP} object in \code{y}.}
+  \item{col.y}{The plotting color for the \code{freqMAP} object in \code{y}.}
+  \item{cex.legend}{The cex parameter passed to all legends. See ?legend for
+    details.}
   \item{layout.matrix}{The matrix passed to \code{layout()} prior to
     plotting. When this argument is not used, the default behavior is to
     show all plots on the same figure stacked vertically.}
@@ -60,7 +92,9 @@
   "b", and the plot title says "b" vs. "a", this
   indicates the OR plotted is (t\_xb t\_ya) / (t\_xa t\_yb), where t\_xj and
   t\_yj indicate the true frequency of category j in the x and y
-  MAPs, respectively.
+  MAPs, respectively. If type="or", plotting characters, line types,
+  line widths, and colors are controlled by \code{pch.x}, \code{lty.x},
+  \code{lwd,x}, and \code{col.x}.
 
   If \code{y} is specified, then  \code{x} and \code{y} must have the
   same values in their elements \code{[["cat.names"]]},
@@ -78,8 +112,9 @@
   the posterior Pr( OR(category 1 vs. category 2) > 1 ) > alpha/2
   or < (1-alpha/2). The value of alpha is defined at two levels by the
   \code{p.value.bar.alpha} argument and plotted in light gray (higher
-  alpha) and dark gray (lower alpha). This can be thought of as a
-  Bayesian analog to a two-sided p-value. See
+  alpha) and dark gray (lower alpha). The shading colors of the two 
+  alpha levels can be overridden by the \code{p.value.bar.color} argument. 
+  This can be thought of as a Bayesian analog to a two-sided p-value. See
   \code{\link{posterior.comparison.freqMAP}} for further details.
   
   Specifying a legend or asking for a p-value legend, while not
@@ -107,6 +142,7 @@
 
   #Make two sets of 2-category frequency data, y1 & y2, which both vary as
   #a function of a continuous variable x
+  set.seed(5)
   x <- runif(2000,min=-2,max=2)
   y1 <- c("a","b")[1+rbinom(n=length(x),size=rep(1,length(x)),prob=pnorm(x/2))]
   y2 <- c("a","b")[1+rbinom(n=length(x),size=rep(1,length(x)),prob=pnorm(x/5))]
@@ -127,6 +163,9 @@
   #Three example plots
   plot(fp1,ylim=matrix(c(0,1),nrow=2,ncol=2,byrow=TRUE))
   plot(fp1,fp2,type="freq",legend=c("y1","y2"),show.p.value.legend=TRUE)
+  plot(fp1,fp2,type="freq",legend=c("y1","y2"),show.p.value.legend=TRUE,
+       p.value.bar.color=c("green","yellow"))
+  
   plot(fp1,fp2,type="or")
 
 }

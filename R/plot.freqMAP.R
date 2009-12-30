@@ -1,9 +1,14 @@
 `plot.freqMAP` <-
 function(x,y=NULL,
-                          xlim=NULL,ylim=NULL,legend=NULL,
-                          show.p.value.legend=FALSE,type="freq",
-                          p.value.bar.alpha=c(.05,.01),cex=1,
-                          layout.matrix=NULL,...){
+         xlim=NULL,ylim=NULL,legend=NULL,
+         show.p.value.legend=FALSE,type="freq",
+         p.value.bar.alpha=c(.05,.01),
+         p.value.bar.color=c("gray90","darkgray"),
+         cex=1,cex.axis=1,cex.lab=1,cex.main=1,
+         pch.x=2,lty.x=1,lwd.x=1,col.x="red",
+         pch.y=1,lty.y=2,lwd.y=1,col.y="blue",
+         cex.legend=1,
+         layout.matrix=NULL,...){
 
   twomaps <- TRUE
   if(is.null(y)) twomaps <- FALSE
@@ -111,34 +116,38 @@ function(x,y=NULL,
       plot(x1,x$cat.ma[,a],ylab="Freq.",
            main=paste("\"",cat.short[i],"\"",sep=""),
            xlab=x$x.label,ylim=yl,xlim=xlim,type="n",
-           cex=cex,cex.axis=cex,cex.lab=cex,cex.main=cex)
+           cex=cex,cex.axis=cex.axis,cex.lab=cex.lab,cex.main=cex.main)
 
       if(twomaps){
         draw.signif.post.boxes(post.dat=pc[,c(x$x.label,paste(a,".gr1.gt.gr2",sep=""))],
                                ylims=yl,alpha1=p.value.bar.alpha[1],alpha2=p.value.bar.alpha[2],
-                               color1="gray90",color2="darkgray",
+                               color1=p.value.bar.color[1],
+			       color2=p.value.bar.color[2],
                                dens1=NULL,dens2=NULL)
       }
       
-      points(x1,x$cat.ma[,a],pch=2,col=2,cex=cex)
-      lines(x1,x$cat.ma[,paste(a,".lpi",sep="")],col=2)
-      lines(x1,x$cat.ma[,paste(a,".upi",sep="")],col=2)
+      points(x1,x$cat.ma[,a],pch=pch.x,col=col.x,cex=cex)
+      lines(x1,x$cat.ma[,paste(a,".lpi",sep="")],col=col.x,lty=lty.x,lwd=lwd.x)
+      lines(x1,x$cat.ma[,paste(a,".upi",sep="")],col=col.x,lty=lty.x,lwd=lwd.x)
       if(twomaps){
-        points(x2,y$cat.ma[,a],col="blue",cex=cex)
-        lines(x2,y$cat.ma[,paste(a,".lpi",sep="")],col="blue",lty=2)
-        lines(x2,y$cat.ma[,paste(a,".upi",sep="")],col="blue",lty=2)
+        points(x2,y$cat.ma[,a],col=col.y,cex=cex,pch=pch.y)
+        lines(x2,y$cat.ma[,paste(a,".lpi",sep="")],col=col.y,lty=lty.y,lwd=lwd.y)
+        lines(x2,y$cat.ma[,paste(a,".upi",sep="")],col=col.y,lty=lty.y,lwd=lwd.y)
       }
       
       abline(h=axTicks(side=2),lty=3)
       if(!is.null(legend)){
         legend(x="topleft",
-               legend=legend,pch=c(2,1),
-               col=c("red","blue"),cex=cex,bty="n")
+               legend=legend,pch=c(pch.x,pch.y),
+               col=c(col.x,col.y),cex=cex.legend,bty="n")
         
       }
       if(show.p.value.legend)
-        add.p.value.legend(alpha1=p.value.bar.alpha[1],alpha2=p.value.bar.alpha[2],
-                           cex=cex)      
+        add.p.value.legend(alpha1=p.value.bar.alpha[1],
+                           alpha2=p.value.bar.alpha[2],
+                           col1=p.value.bar.color[1],
+			   col2=p.value.bar.color[2],
+                           cex=cex.legend)      
     }
     
   }else if(type=="or"){ #odds ratio plots
@@ -168,22 +177,27 @@ function(x,y=NULL,
         
         plot(0,1,main=paste("\"",cat.short[j],"\" vs. \"",cat.short[i],"\"",sep=""),
              ylim=yl,xlim=xlim,xlab=x$x.label,ylab="OR",type="n",log="y",
-             cex=cex,cex.axis=cex,cex.lab=cex,cex.main=cex)
+             cex.axis=cex.axis,cex.lab=cex.lab,cex.main=cex.main)
         
         draw.signif.post.boxes(post.dat=pc[,c(x$x.label,cn[4])],
                                ylims=yl,alpha1=p.value.bar.alpha[1],
-                               alpha2=p.value.bar.alpha[2],color1="gray90",
-                               color2="darkgray",dens1=NULL,dens2=NULL,
+                               alpha2=p.value.bar.alpha[2],
+			       color1=p.value.bar.color[1],
+                               color2=p.value.bar.color[2],
+			       dens1=NULL,dens2=NULL,
                                ylog=TRUE)
-        points(x1,exp(pc[,cn[1]]),pch=2,col="blue",cex=cex)
-        lines(x1,exp(pc[,cn[2]]),col="blue")
-        lines(x1,exp(pc[,cn[3]]),col="blue")
+        points(x1,exp(pc[,cn[1]]),pch=pch.x,col=col.x,cex=cex)
+        lines(x1,exp(pc[,cn[2]]),lwd=lwd.x,lty=lty.x,col=col.x)
+        lines(x1,exp(pc[,cn[3]]),lwd=lwd.x,lty=lty.x,col=col.x)
         abline(h=axTicks(side=2,log=TRUE),lty=3)
         abline(h=1,lwd=2)
 
         if(show.p.value.legend)
-          add.p.value.legend(alpha1=p.value.bar.alpha[1],alpha2=p.value.bar.alpha[2],
-                             cex=cex)
+          add.p.value.legend(alpha1=p.value.bar.alpha[1],
+			     alpha2=p.value.bar.alpha[2],
+			     col1=p.value.bar.color[1],
+			     col2=p.value.bar.color[2],
+                             cex=cex.legend)
 
       }
     }
